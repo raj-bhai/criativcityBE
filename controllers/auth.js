@@ -7,12 +7,30 @@ exports.Login = async (req, res, next) => {
         const email = req.body.email;
         const password = req.body.password;
 
-        const token = jwt.sign({ email: email }, 'my-secret-key');
-        res.status(200).json({
-            message: "Login Succesfull",
-            success: true,
-            token: token
-        })
+        User.findOne({ email: email, password: password })
+            .then((user) => {
+                if (user) {
+                    const token = jwt.sign({ email: user.email, name: user.name }, 'my-secret-key');
+                    res.status(200).json({
+                        message: "Login Succesfull",
+                        success: true,
+                        token: token
+                    })
+                } else {
+                    res.status(400).json({
+                        message: "Invalid credentials",
+                        success: false,
+
+                    })
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(404).json({
+                    message: err,
+                    success: false
+                });
+            });
     } catch (error) {
         console.log(error);
         res.status(404).json({
