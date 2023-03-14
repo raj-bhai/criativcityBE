@@ -11,8 +11,6 @@ require('dotenv').config();
 
 
 const errorController = require('./controllers/error');
-const authRoutes = require('./routes/auth');
-const courseRoutes = require('./routes/course')
 
 const corsOpts = {
     origin: '*',
@@ -25,6 +23,7 @@ const corsOpts = {
     allowedHeaders: [
         'Content-Type',
     ],
+    credentials: true
 };
 
 const app = express();
@@ -33,6 +32,9 @@ app.use(express.json());
 app.use(cors(corsOpts));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+const authRoutes = require('./routes/auth');
+const courseRoutes = require('./routes/course')
 
 app.use('/auth', authRoutes);
 app.use('/course', courseRoutes)
