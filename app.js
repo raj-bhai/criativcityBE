@@ -23,7 +23,8 @@ const corsOpts = {
     allowedHeaders: [
         'Content-Type',
     ],
-    credentials: true
+    credentials: true,
+    exposedHeaders: ['Access-Control-Allow-Credentials'],
 };
 
 const app = express();
