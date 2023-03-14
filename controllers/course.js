@@ -70,7 +70,7 @@ exports.getCourseById = async (req, res, next) => {
 
 exports.AddComment = async (req, res, next) => {
     try {
-
+        res.header('Access-Control-Allow-Origin', '*');
         const tokenHeader = req.headers.authorization;
         const token = tokenHeader.split(" ")[1];
 
@@ -81,6 +81,7 @@ exports.AddComment = async (req, res, next) => {
         const videoId = req.body.videoId;
         const email = decoded.email;
         const data = req.body.data;
+
 
         const comment = new Comment({
             user: user,
