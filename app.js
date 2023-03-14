@@ -14,18 +14,24 @@ const errorController = require('./controllers/error');
 
 const corsOpts = {
     origin: '*',
-
-    methods: [
-        'GET',
-        'POST',
-    ],
-
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
         'Content-Type',
+        'Authorization',
+        'Accept',
+        'Accept-Language',
+        'Access-Control-Allow-Origin',
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Methods',
+        'Access-Control-Allow-Credentials'
     ],
-    credentials: true,
-    exposedHeaders: ['Access-Control-Allow-Credentials'],
+    exposedHeaders: [
+        'Access-Control-Allow-Origin',
+        'Access-Control-Allow-Credentials'
+    ],
+    credentials: true
 };
+
 
 const app = express();
 
