@@ -52,7 +52,7 @@ exports.getCourseById = async (req, res, next) => {
                 res.status(200).json({
                     message: "success",
                     success: true,
-                    data: course
+                    data: course[0]
                 });
             }
         });
