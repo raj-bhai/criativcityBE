@@ -1,4 +1,6 @@
 const Course = require('../models/course');
+const Comment = require('../models/comment');
+const jwt = require('jsonwebtoken');
 
 exports.AddCourse = async (req, res, next) => {
     try {
@@ -60,6 +62,79 @@ exports.getCourseById = async (req, res, next) => {
         console.log(error);
         res.status(404).json({
             message: error,
+            success: false
+        });
+    }
+}
+
+
+exports.AddComment = async (req, res, next) => {
+    try {
+
+        const tokenHeader = req.headers.authorization;
+        const token = tokenHeader.split(" ")[1];
+
+        const decoded = jwt.verify(token, 'my-secret-key');
+
+        const user = decoded.name;
+        const courseId = req.body.courseId;
+        const videoId = req.body.videoId;
+        const email = decoded.email;
+        const data = req.body.data;
+
+        const comment = new Comment({
+            user: user,
+            courseId: courseId,
+            videoId: videoId,
+            email: email,
+            data: data
+        })
+
+        comment.save((error) => {
+            if (error) {
+                console.log(error);
+                res.status(404).json({
+                    message: error,
+                    success: false
+                });
+            } else {
+                res.status(200).json({
+                    message: "Comment added Succesfull",
+                    success: true,
+                })
+            }
+        })
+    } catch (err) {
+        res.status(404).json({
+            message: err,
+            success: false
+        });
+    }
+}
+
+
+exports.getComment = async (req, res, next) => {
+    try {
+        const courseId = req.body.courseId;
+        Comment.find({ courseId: courseId }, (err, comments) => {
+            if (err) {
+                console.error(err);
+                res.status(404).json({
+                    message: err,
+                    success: false
+                });
+            } else {
+                res.status(200).json({
+                    message: "success",
+                    success: true,
+                    data: comments
+                });
+            }
+        });
+
+    } catch (err) {
+        res.status(404).json({
+            message: err,
             success: false
         });
     }
