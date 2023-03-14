@@ -103,10 +103,10 @@ exports.AddComment = async (req, res, next) => {
                 });
             } else {
                 // Add CORS headers here
-                res.header('Access-Control-Allow-Origin', '*');
-                res.header('Access-Control-Allow-Methods', 'GET, POST');
-                res.header('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Credentials');
-                res.header('Access-Control-Allow-Credentials', 'true');
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+                res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Credentials');
+                res.setHeader('Access-Control-Allow-Credentials', 'true');
 
                 res.status(200).json({
                     message: "Comment added Succesfull",
