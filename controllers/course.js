@@ -70,7 +70,7 @@ exports.getCourseById = async (req, res, next) => {
 
 exports.AddComment = async (req, res, next) => {
     try {
-        res.header('Access-Control-Allow-Origin', '*');
+        res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
         const tokenHeader = req.headers.authorization;
         const token = tokenHeader.split(" ")[1];
 
