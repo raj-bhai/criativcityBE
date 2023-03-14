@@ -824,6 +824,11 @@
     "d" "1"
     "es5-ext" "~0.10.14"
 
+"eventemitter3@^4.0.0":
+  "integrity" "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw=="
+  "resolved" "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz"
+  "version" "4.0.7"
+
 "execa@^5.1.1":
   "integrity" "sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg=="
   "resolved" "https://registry.npmjs.org/execa/-/execa-5.1.1.tgz"
@@ -981,7 +986,7 @@
     "locate-path" "^5.0.0"
     "path-exists" "^4.0.0"
 
-"follow-redirects@^1.14.8", "follow-redirects@^1.15.0":
+"follow-redirects@^1.0.0", "follow-redirects@^1.14.8", "follow-redirects@^1.15.0":
   "integrity" "sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA=="
   "resolved" "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.2.tgz"
   "version" "1.15.2"
@@ -1155,6 +1160,15 @@
     "setprototypeof" "1.2.0"
     "statuses" "2.0.1"
     "toidentifier" "1.0.1"
+
+"http-proxy@^1.18.1":
+  "integrity" "sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ=="
+  "resolved" "https://registry.npmjs.org/http-proxy/-/http-proxy-1.18.1.tgz"
+  "version" "1.18.1"
+  dependencies:
+    "eventemitter3" "^4.0.0"
+    "follow-redirects" "^1.0.0"
+    "requires-port" "^1.0.0"
 
 "http2-client@^1.2.5":
   "integrity" "sha512-EC2utToWl4RKfs5zd36Mxq7nzHHBuomZboI0yYL6Y0RmBgT7Sgkq4rQ0ezFTYoIsSs7Tm9SJe+o2FcAg6GBhGA=="

@@ -2,6 +2,10 @@ const Course = require('../models/course');
 const Comment = require('../models/comment');
 const jwt = require('jsonwebtoken');
 
+const httpProxy = require('http-proxy');
+
+const proxy = httpProxy.createProxyServer({});
+
 exports.AddCourse = async (req, res, next) => {
     try {
 
@@ -71,6 +75,8 @@ exports.getCourseById = async (req, res, next) => {
 exports.AddComment = async (req, res, next) => {
     try {
         res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
+
+        proxy.web(req, res, { target: 'https://criativcity.com' });
         const tokenHeader = req.headers.authorization;
         const token = tokenHeader.split(" ")[1];
 
