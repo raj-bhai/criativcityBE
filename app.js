@@ -9,8 +9,10 @@ require('dotenv').config();
 
 
 
+
 const errorController = require('./controllers/error');
 const authRoutes = require('./routes/auth');
+const courseRoutes = require('./routes/course')
 
 const corsOpts = {
     origin: '*',
@@ -33,11 +35,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRoutes);
+app.use('/course', courseRoutes)
 
-// var myquery = { "clientType": "Tech Clients" };
-// task.updateMany(myquery).catch(err=>{
-//     console.log(err)
-// })
 
 
 
