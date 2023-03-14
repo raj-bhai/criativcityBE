@@ -74,9 +74,6 @@ exports.getCourseById = async (req, res, next) => {
 
 exports.AddComment = async (req, res, next) => {
     try {
-        res.header("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type, Accept");
-
-        proxy.web(req, res, { target: 'https://criativcity.com' });
         const tokenHeader = req.headers.authorization;
         const token = tokenHeader.split(" ")[1];
 
@@ -105,6 +102,11 @@ exports.AddComment = async (req, res, next) => {
                     success: false
                 });
             } else {
+                // Add CORS headers here
+                res.header('Access-Control-Allow-Origin', '*');
+                res.header('Access-Control-Allow-Methods', 'GET, POST');
+                res.header('Access-Control-Allow-Headers', 'Content-Type');
+
                 res.status(200).json({
                     message: "Comment added Succesfull",
                     success: true,
