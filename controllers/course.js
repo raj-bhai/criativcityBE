@@ -115,8 +115,8 @@ exports.AddComment = async (req, res, next) => {
 
 exports.getComment = async (req, res, next) => {
     try {
-        const courseId = req.body.courseId;
-        Comment.find({ courseId: courseId }, (err, comments) => {
+        const videoId = req.body.videoId;
+        Comment.find({ videoId: videoId }, (err, comments) => {
             if (err) {
                 console.error(err);
                 res.status(404).json({
