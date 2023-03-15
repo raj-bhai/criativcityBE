@@ -41,10 +41,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const authRoutes = require('./routes/auth');
-const courseRoutes = require('./routes/course')
+const courseRoutes = require('./routes/course');
+const userRoutes = require('./routes/user');
 
 app.use('/auth', authRoutes);
-app.use('/course', courseRoutes)
+app.use('/course', courseRoutes);
+app.use('/user', userRoutes);
 
 
 

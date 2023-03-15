@@ -126,21 +126,23 @@ exports.AddComment = async (req, res, next) => {
 exports.getComment = async (req, res, next) => {
     try {
         const videoId = req.body.videoId;
-        Comment.find({ videoId: videoId }, (err, comments) => {
-            if (err) {
-                console.error(err);
-                res.status(404).json({
-                    message: err,
-                    success: false
-                });
-            } else {
-                res.status(200).json({
-                    message: "success",
-                    success: true,
-                    data: comments
-                });
-            }
-        });
+        Comment.find({ videoId: videoId })
+            .sort({ createdAt: -1 })
+            .exec((err, comments) => {
+                if (err) {
+                    console.error(err);
+                    res.status(404).json({
+                        message: err,
+                        success: false
+                    });
+                } else {
+                    res.status(200).json({
+                        message: "success",
+                        success: true,
+                        data: comments
+                    });
+                }
+            });
 
     } catch (err) {
         res.status(404).json({

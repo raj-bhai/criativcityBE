@@ -20,7 +20,6 @@ exports.Login = async (req, res, next) => {
                     res.status(400).json({
                         message: "Invalid credentials",
                         success: false,
-
                     })
                 }
             })
@@ -47,27 +46,44 @@ exports.Register = async (req, res, next) => {
         const name = req.body.name
         const password = req.body.password
 
-        const user = new User({
-            name: name,
-            email: email,
-            password: password
-        })
-        user.save((error) => {
-            if (error) {
-                console.log(error);
+        User.findOne({ email: email }, (err, user) => {
+            if (err) {
+                console.log(err);
                 res.status(404).json({
-                    message: error,
+                    message: err,
                     success: false
                 });
-            } else {
-                const token = jwt.sign({ email: email }, 'my-secret-key');
+            }
+            if (user) {
                 res.status(200).json({
-                    message: "Registration Succesfull",
-                    success: true,
-                    token: token
+                    message: "Email already exists",
+                    success: false,
+                })
+            } else {
+                const user = new User({
+                    name: name,
+                    email: email,
+                    password: password
+                })
+                user.save((error) => {
+                    if (error) {
+                        console.log(error);
+                        res.status(404).json({
+                            message: error,
+                            success: false
+                        });
+                    } else {
+                        const token = jwt.sign({ email: email, name: name }, 'my-secret-key');
+                        res.status(200).json({
+                            message: "Registration Succesfull",
+                            success: true,
+                            token: token
+                        })
+                    }
                 })
             }
-        })
+        });
+
     } catch (error) {
         console.log(error);
         res.status(404).json({

@@ -14,9 +14,9 @@ const userSchema = new Schema({
         default: "",
     },
     plan: {
-        type: String,
+        type: Boolean,
         required: false,
-        default: ""
+        default: false
     },
     password: {
         type: String,
