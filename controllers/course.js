@@ -12,6 +12,7 @@ const httpProxy = require('http-proxy');
 
 const proxy = httpProxy.createProxyServer({});
 
+
 exports.AddCourse = async (req, res, next) => {
     try {
 

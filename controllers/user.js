@@ -14,7 +14,8 @@ exports.getUserDetails = async (req, res, next) => {
                     const data = {
                         email: user.email,
                         name: user.name,
-                        paidUser: user.plan
+                        paidUser: user.plan,
+                        referralCode: user.referralCode,
                     }
                     res.status(200).json({
                         message: "user detail fetched successfully",
