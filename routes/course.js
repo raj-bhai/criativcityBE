@@ -9,5 +9,6 @@ router.get('/getAllCourse', courseController.getAllCourse);
 router.get('/getCourseById', courseController.getCourseById);
 router.post('/addComment', courseController.AddComment);
 router.post('/getComment', courseController.getComment);
+router.post('/referral', courseController.sendReferalLink);
 
 module.exports = router;    

@@ -1,6 +1,12 @@
 const Course = require('../models/course');
 const Comment = require('../models/comment');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+const hbs = require('handlebars');
+const consolidate = require('consolidate');
+const path = require('path');
+
 
 const httpProxy = require('http-proxy');
 
@@ -152,3 +158,54 @@ exports.getComment = async (req, res, next) => {
     }
 }
 
+exports.sendReferalLink = async (req, res, next) => {
+    try {
+        const email = req.body.email;
+
+        const templateVars = {
+            title: 'Test Email',
+            message: 'This is a test email sent from Node.js using Handlebars template!'
+        };
+
+        const emailHtml = await consolidate.handlebars(path.join(__dirname, '../emailTemplate/referral.hbs'), templateVars);
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: 'Test email',
+            html: emailHtml
+           // text: 'This is a test email sent from Node.js.'
+        };
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL,
+                pass: process.env.PASSWORD
+            }
+        });
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log("Error :", error)
+                res.status(400).json({
+                    message: error,
+                    success: false
+                });
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.status(200).json({
+                    message: "Email sent succesfuly",
+                    success: false
+                });
+            }
+        });
+
+    } catch (error) {
+        console.log("Error :", error);
+        res.status(404).json({
+            message: error,
+            success: false
+        });
+    }
+}

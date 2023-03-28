@@ -43,10 +43,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 const authRoutes = require('./routes/auth');
 const courseRoutes = require('./routes/course');
 const userRoutes = require('./routes/user');
+const razorpayRoutes = require('./routes/razorpay');
 
 app.use('/auth', authRoutes);
 app.use('/course', courseRoutes);
 app.use('/user', userRoutes);
+app.use('/razorpay', razorpayRoutes);
 
 
 

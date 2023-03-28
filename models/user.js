@@ -21,7 +21,27 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
+    },
+    referralCode: {
+        type: String,
+        required: true
+    },
+    clearedBalance: {
+        type: Number,
+        default: 0
+    },
+    unclearedBalance: {
+        type: Number,
+        default: 0
+    },
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null
+    },
+    paymentDate: {
+        type: Date,
+        default: null
     }
-}); 
+});
 
 module.exports = mongoose.model('User', userSchema);

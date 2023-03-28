@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const nodemailer = require('nodemailer');
 
 
 exports.Login = async (req, res, next) => {
@@ -40,12 +41,22 @@ exports.Login = async (req, res, next) => {
 
 };
 
+function generateRandomString(length) {
+    var chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+    var result = '';
+    for (var i = length; i > 0; --i) {
+      result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
+  }
+
 exports.Register = async (req, res, next) => {
     try {
         const email = req.body.email
         const name = req.body.name
         const password = req.body.password
-
+        const refferalId = generateRandomString(8);
+        
         User.findOne({ email: email }, (err, user) => {
             if (err) {
                 console.log(err);
@@ -63,7 +74,8 @@ exports.Register = async (req, res, next) => {
                 const user = new User({
                     name: name,
                     email: email,
-                    password: password
+                    password: password,
+                    referralCode: refferalId
                 })
                 user.save((error) => {
                     if (error) {
@@ -90,5 +102,27 @@ exports.Register = async (req, res, next) => {
             message: err,
             success: false
         });
+    }
+}
+
+ 
+exports.forgotPassword = async = (req, res, next) => {
+    try {
+
+        let transporter = nodemailer.createTransport({
+            host: 'rajkiranjnv@gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'rajkiranjnv1@gmail.com',
+                pass: Math.random(12345678)
+            }
+        });
+        
+    } catch (err) {
+        res.status(404).json({
+            message: err,
+            success: false
+        }); 
     }
 }
