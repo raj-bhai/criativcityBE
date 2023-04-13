@@ -55,7 +55,7 @@ exports.createOrder = async (req, res, next) => {
             res.status(200).json({
                 clientSecret: paymentIntent.client_secret
             })
-            res.json({ clientSecret: paymentIntent.client_secret });
+            // res.json({ clientSecret: paymentIntent.client_secret });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: error });
