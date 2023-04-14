@@ -44,3 +44,38 @@ exports.getUserDetails = async (req, res, next) => {
         });
     }
 }
+
+exports.verifyReferral = async (req, res, next) => {
+    try {
+        const tokenHeader = req.headers.authorization;
+        const token = tokenHeader.split(" ")[1];
+        const decoded = jwt.verify(token, 'my-secret-key');
+        const email = decoded.email;
+        const code = req.body.code;
+
+        User.findOne({ referralCode: code }, function (err, user) {
+            if (err) {
+                // console.log(err);
+                res.status(400).json({
+                    message: "Invalid referral code",
+                    success: false,
+                })
+            } else {
+                // console.log(user);
+                if (user.email === email) {
+                    res.status(400).json({
+                        message: "This is your referral code, other can use this not you",
+                        success: false,
+                    })
+                } else {
+                    res.status(200).json({
+                        message: "valid referral code",
+                        success: true,
+                    })
+                }
+            }
+        });
+    } catch (err) {
+
+    }
+}
