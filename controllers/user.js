@@ -64,7 +64,7 @@ exports.verifyReferral = async (req, res, next) => {
                 // console.log(user);
                 if (user) {
                     if (user.email === email) {
-                        res.status(400).json({
+                        res.status(200).json({
                             message: "This is your referral code, other can use this not you",
                             success: false,
                         })
@@ -75,7 +75,7 @@ exports.verifyReferral = async (req, res, next) => {
                         })
                     }
                 } else {
-                    res.status(400).json({
+                    res.status(200).json({
                         message: "Invalid referral code",
                         success: false,
                     })
