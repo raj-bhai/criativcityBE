@@ -62,20 +62,30 @@ exports.verifyReferral = async (req, res, next) => {
                 })
             } else {
                 // console.log(user);
-                if (user.email === email) {
-                    res.status(400).json({
-                        message: "This is your referral code, other can use this not you",
-                        success: false,
-                    })
+                if (user) {
+                    if (user.email === email) {
+                        res.status(400).json({
+                            message: "This is your referral code, other can use this not you",
+                            success: false,
+                        })
+                    } else {
+                        res.status(200).json({
+                            message: "valid referral code",
+                            success: true,
+                        })
+                    }
                 } else {
-                    res.status(200).json({
-                        message: "valid referral code",
-                        success: true,
+                    res.status(400).json({
+                        message: "Invalid referral code",
+                        success: false,
                     })
                 }
             }
         });
     } catch (err) {
-
+        res.status(400).json({
+            message: "Invalid referral code",
+            success: false,
+        })
     }
 }
