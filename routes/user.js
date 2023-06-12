@@ -8,6 +8,6 @@ router.get('/getUserDetail', userController.getUserDetails);
 // router.post('/forgetPassword', userController.getUserDetails);
 
 router.post('/verifyReferral', userController.verifyReferral);
-router.post('/purchasePlan', userController.purchasePlan);
+router.post('/  ', userController.purchasePlan);
 
 module.exports = router; 

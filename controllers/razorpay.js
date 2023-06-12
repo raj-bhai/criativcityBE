@@ -1,5 +1,7 @@
 const Razorpay = require('razorpay');
 require('dotenv').config();
+const crypto = require('crypto');
+const axios = require('axios');
 
 
 exports.createOrder = async (req, res, next) => {
@@ -41,25 +43,64 @@ exports.createOrder = async (req, res, next) => {
 
         // -----------------------------------------------------------Stripe----------------------------------------------------------
 
-        const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+        // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-        const amount  = req.body.amount;
+        // const amount  = req.body.amount;
 
-        try {
-            const paymentIntent = await stripe.paymentIntents.create({
-                currency: 'INR',
-                metadata: { integration_check: 'accept_a_payment' },
-                amount : amount
-            });
-            res.status(200).json({
-                clientSecret: paymentIntent.client_secret
-            })
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: error });
-        }
+        // try {
+        //     const paymentIntent = await stripe.paymentIntents.create({
+        //         currency: 'INR',
+        //         metadata: { integration_check: 'accept_a_payment' },
+        //         amount : amount
+        //     });
+        //     res.status(200).json({
+        //         clientSecret: paymentIntent.client_secret
+        //     })
+        // } catch (error) {
+        //     console.error(error);
+        //     res.status(500).json({ error: error });
+        // }
+
+        // --------------------------------------------------------------BillDesk----------------------------------------
+
+        const clientid = process.env.BILLDESK_MERCHANTID; // Replace with your actual clientid
+        const secretkey = process.env.BILLDESK_SECRET_KEY; // Replace with your actual secret key
+        const billDeskEndpoint = 'https://uat.billdesk.com/jssdk/v1/dist/'; // Replace with the actual BillDesk API endpoint
+
+        // Generate the JWS Header and Payload
+        const jwsHeader = {
+            alg: 'HS256',
+            clientid,
+        };
+        const payload = req.body;
+
+        const headers = {
+            'content-type': 'application/jose',
+            'bd-timestamp': '20200817132207',
+            accept: 'application/jose',
+            'bd-traceid': '20200817132207ABD1K',
+          };
+
+        // Generate the JWS-HMAC request
+        const jwsHeaderBase64 = Buffer.from(JSON.stringify(jwsHeader)).toString('base64');
+        const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64');
+        const signature = crypto
+            .createHmac('sha256', secretkey)
+            .update(`${jwsHeaderBase64}.${payloadBase64}`)
+            .digest('base64');
+
+        // Prepare the request payload
+        const requestPayload = {
+            jws: `${jwsHeaderBase64}.${payloadBase64}.${signature}`,
+        };
+
+        // Send the request to BillDesk
+        const billDeskResponse = await axios.post(billDeskEndpoint, requestPayload, {headers});
+        res.status(200).json(billDeskResponse.data);
+
 
     } catch (err) {
+        console.log("err :", err);
         res.status(400).json({
             message: err,
             success: false
