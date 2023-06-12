@@ -94,8 +94,9 @@ exports.createOrder = async (req, res, next) => {
           jws: `${jwsHeaderBase64}.${payloadBase64}.${signature}`,
         };
         
+        console.log('req :', requestPayload)
         // Send the request to BillDesk
-        const billDeskResponse = await axios.post(billDeskEndpoint, requestPayload, { headers });
+        const billDeskResponse = await axios.post(billDeskEndpoint, requestPayload, { headers, data: requestPayload });
         res.status(200).json(billDeskResponse.data);
         
 
