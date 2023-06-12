@@ -65,7 +65,7 @@ exports.createOrder = async (req, res, next) => {
 
         const clientid = process.env.BILLDESK_MERCHANTID; // Replace with your actual clientid
         const secretkey = process.env.BILLDESK_SECRET_KEY; // Replace with your actual secret key
-        const billDeskEndpoint = 'https://uat.billdesk.com/jssdk/v1/dist/'; // Replace with the actual BillDesk API endpoint
+        const billDeskEndpoint = 'https://pguat.billdesk.io/payments/ve1_2/orders/create '; // Replace with the actual BillDesk API endpoint
 
         // Generate the JWS Header and Payload
         const jwsHeader = {
