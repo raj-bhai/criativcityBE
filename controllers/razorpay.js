@@ -65,38 +65,39 @@ exports.createOrder = async (req, res, next) => {
 
         const clientid = process.env.BILLDESK_MERCHANTID; // Replace with your actual clientid
         const secretkey = process.env.BILLDESK_SECRET_KEY; // Replace with your actual secret key
-        const billDeskEndpoint = 'https://pguat.billdesk.io/payments/ve1_2/orders/create '; // Replace with the actual BillDesk API endpoint
-
+        const billDeskEndpoint = 'https://pguat.billdesk.io/payments/ve1_2/orders/create'; // Replace with the actual BillDesk API endpoint
+        
         // Generate the JWS Header and Payload
         const jwsHeader = {
-            alg: 'HS256',
-            clientid,
+          alg: 'HS256',
+          clientid,
         };
         const payload = req.body;
-
+        
         const headers = {
-            'content-type': 'application/jose',
-            'bd-timestamp': '20200817132207',
-            accept: 'application/jose',
-            'bd-traceid': '20200817132207ABD1K',
-          };
-
-        // Generate the JWS-HMAC request
+          'content-type': 'application/jose',
+          'bd-timestamp': '20200817132207',
+          accept: 'application/jose',
+          'bd-traceid': '20200817132207ABD1K',
+        };
+        
+        // Generate the JWS-HMAC signature
         const jwsHeaderBase64 = Buffer.from(JSON.stringify(jwsHeader)).toString('base64');
         const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64');
         const signature = crypto
-            .createHmac('sha256', secretkey)
-            .update(`${jwsHeaderBase64}.${payloadBase64}`)
-            .digest('base64');
-
+          .createHmac('sha256', secretkey)
+          .update(`${jwsHeaderBase64}.${payloadBase64}`)
+          .digest('base64');
+        
         // Prepare the request payload
         const requestPayload = {
-            jws: `${jwsHeaderBase64}.${payloadBase64}.${signature}`,
+          jws: `${jwsHeaderBase64}.${payloadBase64}.${signature}`,
         };
-
+        
         // Send the request to BillDesk
-        const billDeskResponse = await axios.post(billDeskEndpoint, requestPayload, {headers});
+        const billDeskResponse = await axios.post(billDeskEndpoint, requestPayload, { headers });
         res.status(200).json(billDeskResponse.data);
+        
 
 
     } catch (err) {
