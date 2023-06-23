@@ -4,108 +4,194 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 
+
+function base64UrlEncode(str) {
+  let base64 = Buffer.from(str).toString('base64');
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function generateBdTimestamp() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
+  return timestamp;
+}
+
+function generateInvoiceDate() {
+  // Get the current date and time
+  const now = new Date();
+
+  // Customize the date as needed
+  // Example: Setting the invoice date to 3 days from the current date
+  now.setDate(now.getDate() + 3);
+
+  // Format the date as per the desired format
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  const invoiceDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}+05:30`;
+  return invoiceDate;
+}
+
 exports.createOrder = async (req, res, next) => {
-    try {
+  try {
 
-        // ---------------------------------------------------------------------Razorpay------------------------------------------------
+    // ---------------------------------------------------------------------Razorpay------------------------------------------------
 
-        // const razorpay = new Razorpay({
-        //     key_id: process.env.RAZORPAY_KEY_ID,
-        //     key_secret: process.env.RAZORPAY_KEY_SECRET,
-        // });
+    // const razorpay = new Razorpay({
+    //     key_id: process.env.RAZORPAY_KEY_ID,
+    //     key_secret: process.env.RAZORPAY_KEY_SECRET,
+    // });
 
-        // const amount = req.body.amount; // Amount in paise (i.e., 1000 paise = INR 10)
-        // const currency = 'INR';
-        // const options = {
-        //     amount: amount,
-        //     currency: currency,
-        //     receipt: 'order_rcptid_11',
-        //     payment_capture: 1,
-        // };
+    // const amount = req.body.amount; // Amount in paise (i.e., 1000 paise = INR 10)
+    // const currency = 'INR';
+    // const options = {
+    //     amount: amount,
+    //     currency: currency,
+    //     receipt: 'order_rcptid_11',
+    //     payment_capture: 1,
+    // };
 
-        // razorpay.orders.create(options, function (err, order) {
-        //     if (err) {
-        //         console.log(err);
-        //         res.status(400).json({
-        //             message: err,
-        //             success: false
-        //         });
-        //     } else {
-        //         console.log("order :",order);
-        //         res.status(200).json({
-        //             success: true,
-        //             data: order
-        //         })
-        //     }
-        // });
-
-
-
-        // -----------------------------------------------------------Stripe----------------------------------------------------------
-
-        // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
-        // const amount  = req.body.amount;
-
-        // try {
-        //     const paymentIntent = await stripe.paymentIntents.create({
-        //         currency: 'INR',
-        //         metadata: { integration_check: 'accept_a_payment' },
-        //         amount : amount
-        //     });
-        //     res.status(200).json({
-        //         clientSecret: paymentIntent.client_secret
-        //     })
-        // } catch (error) {
-        //     console.error(error);
-        //     res.status(500).json({ error: error });
-        // }
-
-        // --------------------------------------------------------------BillDesk----------------------------------------
-
-        const clientid = process.env.BILLDESK_MERCHANTID; // Replace with your actual clientid
-        const secretkey = process.env.BILLDESK_SECRET_KEY; // Replace with your actual secret key
-        const billDeskEndpoint = 'https://pguat.billdesk.io/payments/ve1_2/orders/create'; // Replace with the actual BillDesk API endpoint
-        
-        // Generate the JWS Header and Payload
-        const jwsHeader = {
-          alg: 'HS256',
-          clientid,
-        };
-        const payload = req.body;
-        
-        const headers = {
-          'content-type': 'application/jose',
-          'bd-timestamp': '20200817132207',
-          accept: 'application/jose',
-          'bd-traceid': '20200817132207ABD1K',
-        };
-        
-        // Generate the JWS-HMAC signature
-        const jwsHeaderBase64 = Buffer.from(JSON.stringify(jwsHeader)).toString('base64');
-        const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64');
-        const signature = crypto
-          .createHmac('sha256', secretkey)
-          .update(`${jwsHeaderBase64}.${payloadBase64}`)
-          .digest('base64');
-        
-        // Prepare the request payload
-        const requestPayload = {
-          jws: `${jwsHeaderBase64}.${payloadBase64}.${signature}`,
-        };
-        
-        console.log('req :', requestPayload)
-        // Send the request to BillDesk
-        const billDeskResponse = await axios.post(billDeskEndpoint, requestPayload, { headers, data: requestPayload });
-        res.status(200).json(billDeskResponse.data);
-        
+    // razorpay.orders.create(options, function (err, order) {
+    //     if (err) {
+    //         console.log(err);
+    //         res.status(400).json({
+    //             message: err,
+    //             success: false
+    //         });
+    //     } else {
+    //         console.log("order :",order);
+    //         res.status(200).json({
+    //             success: true,
+    //             data: order
+    //         })
+    //     }
+    // });
 
 
-    } catch (err) {
-        console.log("err :", err);
-        res.status(400).json({
-            message: err,
-            success: false
-        });
-    }
+
+    // -----------------------------------------------------------Stripe----------------------------------------------------------
+
+    // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+    // const amount  = req.body.amount;
+
+    // try {
+    //     const paymentIntent = await stripe.paymentIntents.create({
+    //         currency: 'INR',
+    //         metadata: { integration_check: 'accept_a_payment' },
+    //         amount : amount
+    //     });
+    //     res.status(200).json({
+    //         clientSecret: paymentIntent.client_secret
+    //     })
+    // } catch (error) {
+    //     console.error(error);
+    //     res.status(500).json({ error: error });
+    // }
+
+    // --------------------------------------------------------------BillDesk---------------------------------------- 
+
+    const apiUrl = 'https://pguat.billdesk.io/payments/ve1_2/orders/create';
+    const sharedSecretKey = process.env.BILLDESK_SECRET_KEY;
+    const clientId = "uatelixtec";
+
+    const jwsHeader = {
+      alg: 'HS256',
+      clientid: clientId
+    };
+    const encodedHeader = base64UrlEncode(JSON.stringify(jwsHeader));
+
+    const payload = {
+      mercid: "UATELIXTEC",
+      orderid: 'TSSGF43214F',
+      amount: '300.00',
+      order_date: generateInvoiceDate(),
+      currency: '356',
+      ru: 'https://www.example.com/merchant/api/pgresponse',
+      additional_info: {
+        additional_info1: 'Details1',
+        additional_info2: 'Details2'
+      },
+      itemcode: 'DIRECT',
+      invoice: {
+        invoice_number: 'MEINVU111111221133',
+        invoice_display_number: '11221133',
+        customer_name: 'Tejas',
+        invoice_date: generateInvoiceDate(),
+        gst_details: {
+          cgst: '8.00',
+          sgst: '8.00',
+          igst: '0.00',
+          gst: '16.00',
+          cess: '0.00',
+          gstincentive: '5.00',
+          gstpct: '16.00',
+          gstin: '12344567'
+        }
+      },
+      device: {
+        init_channel: 'internet',
+        ip: '202.149.208.92',
+        mac: '11-AC-58-21-1B-AA',
+        imei: '990000112233445',
+        user_agent: 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0',
+        accept_header: 'text/html',
+        fingerprintid: '61b12c18b5d0cf901be34a23ca64bb19'
+      }
+    };
+    const encodedPayload = base64UrlEncode(JSON.stringify(payload));
+
+
+    const signature = crypto.createHmac('sha256', sharedSecretKey)
+      .update(`${encodedHeader}.${encodedPayload}`)
+      .digest('base64');
+    const encodedSignature = base64UrlEncode(signature);
+
+    const jwsHmacToken = `${encodedHeader}.${encodedPayload}.${encodedSignature}`;
+
+    const headers = {
+      'Content-Type': 'application/jose',
+      'bd-timestamp': generateBdTimestamp(),
+      'accept': 'application/jose',
+      'bd-traceid': '20200817132207ABD1K',
+      'Authorization': `Bearer ${jwsHmacToken}`
+    };
+
+    console.log("payload :", payload)
+    console.log("Headers :", headers)
+
+    axios.post(apiUrl, payload, { headers })
+      .then(response => {
+        // Process the API response
+        if (response.status === 200) {
+          const data = response.data;
+          // Process the returned data
+          console.log(data);
+        } else {
+          throw new Error(`API request failed with status code: ${response.status}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error.message);
+      });
+
+
+  } catch (err) {
+    console.log("err :", err);
+    res.status(400).json({
+      message: err,
+      success: false
+    });
+  }
 }
