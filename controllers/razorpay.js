@@ -178,6 +178,7 @@ exports.createOrder = async (req, res, next) => {
           const data = response.data;
           // Process the returned data
           console.log(data);
+          res.status(200).json(data)
         } else {
           throw new Error(`API request failed with status code: ${response.status}`);
         }
