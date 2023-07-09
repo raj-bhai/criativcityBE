@@ -250,8 +250,10 @@ exports.createOrder = async (req, res, next) => {
     const hmac = crypto.createHmac('sha256', secretKey);
     hmac.update(encodedData);
     const jwsSignature = base64UrlEncode(hmac.digest());
+    console.log("signature :", jwsSignature)
 
     const jwsToken = `${jwsHeaderString}.${jwsPayloadString}.${jwsSignature}`;
+    console.log("jwsToken :", jwsToken)
 
     const headers = {
       'Content-Type': 'application/jose',
