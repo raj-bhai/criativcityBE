@@ -264,12 +264,12 @@ exports.createOrder = async (req, res, next) => {
       'bd-traceid': `${generateBdTimestamp()}ABD1K`
     };
 console.log("Header :", headers)
-    const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
+    const response = await axios.post('https://pay.billdesk.com/jssdk/v1/dist/', jwsToken, { headers });
 
     console.log('Response:', response);
     res.status(200).json({ data: response.data });
   } catch (error) {
-    console.error('Error:', error);
+    // console.error('Error:', error);
     res.status(400).json({
       message: error,
       success: false
