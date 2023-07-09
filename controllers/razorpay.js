@@ -194,41 +194,41 @@ function base64UrlEncode(input) {
 exports.createOrder = async (req, res, next) => {
   try {
     const payload = {
-      mercid: process.env.BILLDESK_MERCHANTID,
-      orderid: 'TSSGF43214F',
-      amount: '300.00',
-      order_date: '2020-08-17T15:19:00+0530',
-      currency: '356',
-      ru: 'https://www.example.com/merchant/api/pgresponse',
-      additional_info: {
-        additional_info1: 'Details1',
-        additional_info2: 'Details2'
+      "mercid":process.env.BILLDESK_MERCHANTID,
+      "orderid":"TSSGF43214F",
+      "amount":"300.00",
+      "order_date":"2020-08-17T15:19:00+0530",
+      "currency":"356",
+      "ru":"https://www.example.com/merchant/api/pgresponse",
+      "additional_info":{
+      "additional_info1":"Details1",
+      "additional_info2":"Details2"
       },
-      itemcode: 'DIRECT',
-      invoice: {
-        invoice_number: 'MEINVU111111221133',
-        invoice_display_number: '11221133',
-        customer_name: 'Tejas',
-        invoice_date: '2021-09-03T13:21:5+05:30',
-        gst_details: {
-          cgst: '8.00',
-          sgst: '8.00',
-          igst: '0.00',
-          gst: '16.00',
-          cess: '0.00',
-          gstincentive: '5.00',
-          gstpct: '16.00',
-          gstin: '12344567'
-        }
+      "itemcode":"DIRECT",
+      "invoice":{
+      "invoice_number":"MEINVU111111221133",
+      "invoice_display_number":"11221133",
+      "customer_name":"Tejas",
+      "invoice_date":"2021-09-03T13:21:5+05:30",
+      "gst_details":{
+      "cgst":"8.00",
+      "sgst":"8.00",
+      "igst":"0.00",
+      "gst":"16.00",
+      "cess":"0.00",
+      "gstincentive":"5.00",
+      "gstpct":"16.00",
+      "gstin":"12344567"
+      }
       },
-      device: {
-        init_channel: 'internet',
-        ip: '202.149.208.92',
-        mac: '11-AC-58-21-1B-AA',
-        imei: '990000112233445',
-        user_agent: 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0',
-        accept_header: 'text/html',
-        fingerprintid: '61b12c18b5d0cf901be34a23ca64bb19'
+      "device":{
+      "init_channel":"internet",
+      "ip":"202.149.208.92",
+      "mac":"11-AC-58-21-1B-AA",
+      "imei":"990000112233445",
+      "user_agent":"Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0)Gecko/20100101 Firefox/51.0",
+      "accept_header":"text/html",
+      "fingerprintid":"61b12c18b5d0cf901be34a23ca64bb19"
       }
     };
 
