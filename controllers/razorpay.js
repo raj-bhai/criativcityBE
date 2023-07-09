@@ -180,6 +180,17 @@ function generateInvoiceDate() {
 //   }
 // }
 
+
+// Function to encode a string using base64url encoding
+
+
+
+function base64UrlEncode(input) {
+  let base64 = Buffer.from(input).toString('base64');
+  base64 = base64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  return base64;
+}
+
 exports.createOrder = async (req, res, next) => {
   try {
     const payload = {
@@ -220,6 +231,7 @@ exports.createOrder = async (req, res, next) => {
         fingerprintid: '61b12c18b5d0cf901be34a23ca64bb19'
       }
     };
+
     const payloadString = JSON.stringify(payload);
     const timestamp = new Date().toISOString().replace(/[-:]/g, '');
 
@@ -228,15 +240,17 @@ exports.createOrder = async (req, res, next) => {
       clientid: process.env.BILLDESK_CLIENTID
     };
 
-    const jwsHeaderString = Buffer.from(JSON.stringify(jwsHeader)).toString('base64url');
+    const jwsHeaderString = base64UrlEncode(JSON.stringify(jwsHeader));
     const jwsPayload = payloadString;
-
-    const jwsPayloadString = Buffer.from(jwsPayload).toString('base64url');
+    const jwsPayloadString = base64UrlEncode(jwsPayload);
 
     const encodedData = `${jwsHeaderString}.${jwsPayloadString}`;
 
-    const secretKey = process.env.BILLDESK_SECRET_KEY; 
-    const jwsSignature = crypto.createHmac('sha256', secretKey).update(encodedData).digest('base64url');
+    const secretKey = process.env.BILLDESK_SECRET_KEY;
+    const hmac = crypto.createHmac('sha256', secretKey);
+    hmac.update(encodedData);
+    const jwsSignature = base64UrlEncode(hmac.digest());
+
     const jwsToken = `${jwsHeaderString}.${jwsPayloadString}.${jwsSignature}`;
 
     const headers = {
@@ -246,18 +260,17 @@ exports.createOrder = async (req, res, next) => {
       'bd-traceid': `${timestamp}ABD1K`
     };
 
-    // Send the POST request
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
 
     console.log('Response:', response.data);
-    res.status(200).json({data :response.data})
-
-  } catch (err) {
-    console.log("err :", err);
+    res.status(200).json({ data: response.data });
+  } catch (error) {
+    console.error('Error:', error.response.data);
     res.status(400).json({
-      message: err,
+      message: error.response.data,
       success: false
     });
   }
-}
+};
+
 
