@@ -234,6 +234,8 @@ exports.createOrder = async (req, res, next) => {
 
     const payloadString = JSON.stringify(payload);
     const timestamp = new Date().toISOString().replace(/[-:]/g, '');
+    console.log("TimeStamp :", timestamp);
+    console.log("BDTimestamp :", generateBdTimestamp())
 
     const jwsHeader = {
       alg: 'HS256',
@@ -257,9 +259,9 @@ exports.createOrder = async (req, res, next) => {
 
     const headers = {
       'Content-Type': 'application/jose',
-      'bd-timestamp': timestamp,
+      'bd-timestamp': generateBdTimestamp(),
       'Accept': 'application/jose',
-      'bd-traceid': `${timestamp}ABD1K`
+      'bd-traceid': `${generateBdTimestamp()}ABD1K`
     };
 console.log("Header :", headers)
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
