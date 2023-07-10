@@ -191,7 +191,7 @@ exports.createOrder = async (req, res, next) => {
   try {
     const payload = {
       mercid: process.env.BILLDESK_MERCHANTID,
-      orderid: 'TSSGF43214F',
+      orderid: 'GRDHHTD13244',
       amount: '300.00',
       order_date: '2020-08-17T15:19:00+0530',
       currency: '356',
@@ -254,18 +254,8 @@ exports.createOrder = async (req, res, next) => {
       'Accept': 'application/jose',
       'bd-traceid': `${timestamp}ABD1K`
     };
-
-    // const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
-    const response = await axios.post(
-      'https://pguat.billdesk.io/payments/ve1_2/orders/create',
-      {},
-      {
-        headers: {
-          ...headers,
-          Authorization: `Bearer ${jwsToken}`,
-        },
-      }
-    );
+console.log("JwsToken :", jwsToken)
+    const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
 
     console.log('Response:', response.data);
     res.status(200).json({ data: response.data });
