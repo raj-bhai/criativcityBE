@@ -190,15 +190,15 @@ function base64UrlEncode(input) {
 exports.createOrder = async (req, res, next) => {
   try {
 
+    const {orderId, amount} = req.body;
     const currentDate = new Date();
-const formattedDate = currentDate.toISOString().replace(/\.\d{3}/, '') + '+0530';
+    const formattedDate = currentDate.toISOString().replace(/\.\d{3}/, '') + '+0530';
 
-console.log(formattedDate);
 
     const payload = {
       mercid: process.env.BILLDESK_MERCHANTID,
-      orderid: 'GRDHHTD13244',
-      amount: '300.00',
+      orderid: orderId,
+      amount: amount,
       order_date: formattedDate,
       currency: '356',
       ru: 'https://www.example.com/merchant/api/pgresponse',
@@ -260,10 +260,10 @@ console.log(formattedDate);
       'Accept': 'application/jose',
       'bd-traceid': `${timestamp}ABD1K`
     };
-    console.log(" Trace Id :",`${timestamp}ABD1K` )
-    console.log(" order Date :", formattedDate)
-    console.log("TimeStamp :", timestamp);
-console.log("JwsToken :", jwsToken)
+    //     console.log(" Trace Id :",`${timestamp}ABD1K` )
+    //     console.log(" order Date :", formattedDate)
+    //     console.log("TimeStamp :", timestamp);
+    // console.log("JwsToken :", jwsToken)
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
 
     console.log('Response:', response.data);
