@@ -255,7 +255,17 @@ exports.createOrder = async (req, res, next) => {
       'bd-traceid': `${timestamp}ABD1K`
     };
 
-    const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
+    // const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
+    const response = await axios.post(
+      'https://pguat.billdesk.io/payments/ve1_2/orders/create',
+      {},
+      {
+        headers: {
+          ...headers,
+          Authorization: `Bearer ${jwsToken}`,
+        },
+      }
+    );
 
     console.log('Response:', response.data);
     res.status(200).json({ data: response.data });
