@@ -24,17 +24,27 @@ function base64UrlEncode(input) {
   return base64;
 }
 
-const decryptData = (encryptedData, secretKey) => {
-  const algorithm = 'aes-256-cbc';
-  const key = crypto.createHash('sha256').update(secretKey, 'utf8').digest();
-  const iv = Buffer.alloc(16, 0);
+// Function to decrypt the data
+function decryptData(encryptedData, secretKey) {
+  const [jwsHeader, jwsPayload, jwsSignature] = encryptedData.split('.');
   
-  const decipher = crypto.createDecipheriv(algorithm, key, iv);
-  let decryptedData = decipher.update(encryptedData, 'base64', 'utf8');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, Buffer.alloc(16));
+  let decryptedData = decipher.update(jwsPayload, 'base64', 'utf8');
   decryptedData += decipher.final('utf8');
   
   return decryptedData;
-};
+}
+
+// Function to verify the signature
+function verifySignature(encryptedData, secretKey) {
+  const [jwsHeader, jwsPayload, jwsSignature] = encryptedData.split('.');
+  
+  const hmac = crypto.createHmac('sha256', secretKey);
+  hmac.update(`${jwsHeader}.${jwsPayload}`);
+  const calculatedSignature = hmac.digest('base64');
+  
+  return calculatedSignature === jwsSignature;
+}
 
 
 
@@ -114,20 +124,13 @@ exports.createOrder = async (req, res, next) => {
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
 
     // console.log('Response:', response.data);
-    const encryptedParts = response.data.split('.');
+    const decryptedData = decryptData(response.data, secretKey);
 
-    if (encryptedParts.length !== 2) {
-      throw new Error('Invalid encrypted data format');
-    }
-
-    const encryptedToken = encryptedParts[0];
-    const encryptedPayload = encryptedParts[1];
-
-    const decryptedToken = decryptData(encryptedToken, secretKey);
-    const decryptedPayload = decryptData(encryptedPayload, secretKey);
-
-    console.log('Decrypted Token:', decryptedToken);
-    console.log('Decrypted Payload:', decryptedPayload);
+    // Verify the signature
+    const isSignatureValid = verifySignature(response.data, secretKey);
+    
+    console.log('Decrypted Data:', decryptedData);
+    console.log('Is Signature Valid:', isSignatureValid);
     res.status(200).json({ data: response.data});
   } catch (error) {
     console.log("Error:", error);
