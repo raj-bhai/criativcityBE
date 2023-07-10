@@ -5,11 +5,6 @@ const axios = require('axios');
 
 
 
-function base64UrlEncode(str) {
-  let base64 = Buffer.from(str).toString('base64');
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
-
 function generateBdTimestamp() {
   const now = new Date();
   const year = now.getFullYear();
@@ -191,51 +186,50 @@ function base64UrlEncode(input) {
   return base64;
 }
 
+
 exports.createOrder = async (req, res, next) => {
   try {
     const payload = {
-      "mercid":process.env.BILLDESK_MERCHANTID,
-      "orderid":"TSSGF43214F",
-      "amount":"300.00",
-      "order_date":"2020-08-17T15:19:00+0530",
-      "currency":"356",
-      "ru":"https://www.example.com/merchant/api/pgresponse",
-      "additional_info":{
-      "additional_info1":"Details1",
-      "additional_info2":"Details2"
+      mercid: process.env.BILLDESK_MERCHANTID,
+      orderid: 'TSSGF43214F',
+      amount: '300.00',
+      order_date: '2020-08-17T15:19:00+0530',
+      currency: '356',
+      ru: 'https://www.example.com/merchant/api/pgresponse',
+      additional_info: {
+        additional_info1: 'Details1',
+        additional_info2: 'Details2'
       },
-      "itemcode":"DIRECT",
-      "invoice":{
-      "invoice_number":"MEINVU111111221133",
-      "invoice_display_number":"11221133",
-      "customer_name":"Tejas",
-      "invoice_date":"2021-09-03T13:21:5+05:30",
-      "gst_details":{
-      "cgst":"8.00",
-      "sgst":"8.00",
-      "igst":"0.00",
-      "gst":"16.00",
-      "cess":"0.00",
-      "gstincentive":"5.00",
-      "gstpct":"16.00",
-      "gstin":"12344567"
-      }
+      itemcode: 'DIRECT',
+      invoice: {
+        invoice_number: 'MEINVU111111221133',
+        invoice_display_number: '11221133',
+        customer_name: 'Tejas',
+        invoice_date: '2021-09-03T13:21:5+05:30',
+        gst_details: {
+          cgst: '8.00',
+          sgst: '8.00',
+          igst: '0.00',
+          gst: '16.00',
+          cess: '0.00',
+          gstincentive: '5.00',
+          gstpct: '16.00',
+          gstin: '12344567'
+        }
       },
-      "device":{
-      "init_channel":"internet",
-      "ip":"202.149.208.92",
-      "mac":"11-AC-58-21-1B-AA",
-      "imei":"990000112233445",
-      "user_agent":"Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0)Gecko/20100101 Firefox/51.0",
-      "accept_header":"text/html",
-      "fingerprintid":"61b12c18b5d0cf901be34a23ca64bb19"
+      device: {
+        init_channel: 'internet',
+        ip: '202.149.208.92',
+        mac: '11-AC-58-21-1B-AA',
+        imei: '990000112233445',
+        user_agent: 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0',
+        accept_header: 'text/html',
+        fingerprintid: '61b12c18b5d0cf901be34a23ca64bb19'
       }
     };
 
     const payloadString = JSON.stringify(payload);
-    const timestamp = new Date().toISOString().replace(/[-:]/g, '');
-    console.log("TimeStamp :", timestamp);
-    console.log("BDTimestamp :", generateBdTimestamp())
+    const timestamp = generateBdTimestamp();
 
     const jwsHeader = {
       alg: 'HS256',
@@ -243,8 +237,7 @@ exports.createOrder = async (req, res, next) => {
     };
 
     const jwsHeaderString = base64UrlEncode(JSON.stringify(jwsHeader));
-    const jwsPayload = payloadString;
-    const jwsPayloadString = base64UrlEncode(jwsPayload);
+    const jwsPayloadString = base64UrlEncode(payloadString);
 
     const encodedData = `${jwsHeaderString}.${jwsPayloadString}`;
 
@@ -252,29 +245,28 @@ exports.createOrder = async (req, res, next) => {
     const hmac = crypto.createHmac('sha256', secretKey);
     hmac.update(encodedData);
     const jwsSignature = base64UrlEncode(hmac.digest());
-    console.log("signature :", jwsSignature)
 
     const jwsToken = `${jwsHeaderString}.${jwsPayloadString}.${jwsSignature}`;
-    console.log("jwsToken :", jwsToken)
 
     const headers = {
       'Content-Type': 'application/jose',
-      'bd-timestamp': generateBdTimestamp(),
+      'bd-timestamp': timestamp,
       'Accept': 'application/jose',
-      'bd-traceid': `${generateBdTimestamp()}ABD1K`
+      'bd-traceid': `${timestamp}ABD1K`
     };
-console.log("Header :", headers)
-    const response = await axios.post('https://pay.billdesk.com/jssdk/v1/dist/', jwsToken, { headers });
 
-    console.log('Response:', response);
+    const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
+
+    console.log('Response:', response.data);
     res.status(200).json({ data: response.data });
   } catch (error) {
-    // console.error('Error:', error);
+    console.log("Error:", error);
     res.status(400).json({
       message: error,
       success: false
     });
   }
 };
+
 
 
