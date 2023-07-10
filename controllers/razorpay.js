@@ -263,7 +263,7 @@ console.log("JwsToken :", jwsToken)
     console.log('Response:', response.data);
     res.status(200).json({ data: response.data });
   } catch (error) {
-    console.log("Error:", error);
+    // console.log("Error:", error);
     res.status(400).json({
       message: error,
       success: false
