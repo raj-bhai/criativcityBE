@@ -24,6 +24,20 @@ function base64UrlEncode(input) {
   return base64;
 }
 
+function base64UrlDecode(input) {
+  let base64 = input.replace(/-/g, '+').replace(/_/g, '/');
+  const paddingLength = 4 - (base64.length % 4);
+  base64 += '==='.slice(0, paddingLength);
+  return Buffer.from(base64, 'base64').toString('binary');
+}
+
+function decodeJwsToken(jwsToken) {
+  const parts = jwsToken.split('.');
+  const jwsPayloadString = base64UrlDecode(parts[1]);
+  const payload = JSON.parse(jwsPayloadString);
+  return payload;
+}
+
 
 
 exports.createOrder = async (req, res, next) => {
@@ -101,6 +115,9 @@ exports.createOrder = async (req, res, next) => {
     };
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
     console.log(response.data)
+
+    const decodeResponse = decodeJwsToken(response.data);
+    console.log("decoded :", decodeResponse)
     res.status(200).json({ data: response.data });
   } catch (error) {
     console.log("Error:", error);
