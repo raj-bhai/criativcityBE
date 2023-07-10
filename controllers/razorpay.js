@@ -193,7 +193,7 @@ exports.createOrder = async (req, res, next) => {
       mercid: process.env.BILLDESK_MERCHANTID,
       orderid: 'GRDHHTD13244',
       amount: '300.00',
-      order_date: '2020-08-17T15:19:00+0530',
+      order_date: new Date,
       currency: '356',
       ru: 'https://www.example.com/merchant/api/pgresponse',
       additional_info: {
@@ -254,6 +254,9 @@ exports.createOrder = async (req, res, next) => {
       'Accept': 'application/jose',
       'bd-traceid': `${timestamp}ABD1K`
     };
+    console.log(" Trace Id :",`${timestamp}ABD1K` )
+    console.log(" order Date :", new Date)
+    console.log("TimeStamp :", timestamp);
 console.log("JwsToken :", jwsToken)
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
 
