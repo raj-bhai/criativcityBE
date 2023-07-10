@@ -114,9 +114,20 @@ exports.createOrder = async (req, res, next) => {
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
 
     // console.log('Response:', response.data);
+    const encryptedParts = response.data.split('.');
 
-    const decryptedData = decryptData(response.data, secretKey);
-    console.log('Decrypted Data:', decryptedData);
+    if (encryptedParts.length !== 2) {
+      throw new Error('Invalid encrypted data format');
+    }
+
+    const encryptedToken = encryptedParts[0];
+    const encryptedPayload = encryptedParts[1];
+
+    const decryptedToken = decryptData(encryptedToken, secretKey);
+    const decryptedPayload = decryptData(encryptedPayload, secretKey);
+
+    console.log('Decrypted Token:', decryptedToken);
+    console.log('Decrypted Payload:', decryptedPayload);
     res.status(200).json({ data: response.data});
   } catch (error) {
     console.log("Error:", error);
