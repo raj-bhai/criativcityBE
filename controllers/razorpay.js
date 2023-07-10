@@ -118,7 +118,7 @@ exports.createOrder = async (req, res, next) => {
 
     const decodeResponse = decodeJwsToken(response.data);
     console.log("decoded :", decodeResponse)
-    res.status(200).json({ data: response.data });
+    res.status(200).json({ data: decodeResponse });
   } catch (error) {
     console.log("Error:", error);
     res.status(400).json({
