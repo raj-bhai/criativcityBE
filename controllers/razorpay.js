@@ -25,8 +25,14 @@ function base64UrlEncode(input) {
 }
 
 const decryptData = (encryptedData, secretKey) => {
-  const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
-  const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+  const algorithm = 'aes-256-cbc';
+  const key = crypto.createHash('sha256').update(secretKey, 'utf8').digest();
+  const iv = Buffer.alloc(16, 0);
+  
+  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decryptedData = decipher.update(encryptedData, 'base64', 'utf8');
+  decryptedData += decipher.final('utf8');
+  
   return decryptedData;
 };
 
