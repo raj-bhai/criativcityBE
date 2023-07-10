@@ -24,28 +24,6 @@ function base64UrlEncode(input) {
   return base64;
 }
 
-// Function to decrypt the data
-function decryptData(encryptedData, secretKey) {
-  const [jwsHeader, jwsPayload, jwsSignature] = encryptedData.split('.');
-  
-  const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, Buffer.alloc(16));
-  let decryptedData = decipher.update(jwsPayload, 'base64', 'utf8');
-  decryptedData += decipher.final('utf8');
-  
-  return decryptedData;
-}
-
-// Function to verify the signature
-function verifySignature(encryptedData, secretKey) {
-  const [jwsHeader, jwsPayload, jwsSignature] = encryptedData.split('.');
-  
-  const hmac = crypto.createHmac('sha256', secretKey);
-  hmac.update(`${jwsHeader}.${jwsPayload}`);
-  const calculatedSignature = hmac.digest('base64');
-  
-  return calculatedSignature === jwsSignature;
-}
-
 
 
 exports.createOrder = async (req, res, next) => {
@@ -122,16 +100,8 @@ exports.createOrder = async (req, res, next) => {
       'bd-traceid': `${timestamp}ABD1K`
     };
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
-
-    // console.log('Response:', response.data);
-    const decryptedData = decryptData(response.data, secretKey);
-
-    // Verify the signature
-    const isSignatureValid = verifySignature(response.data, secretKey);
-    
-    console.log('Decrypted Data:', decryptedData);
-    console.log('Is Signature Valid:', isSignatureValid);
-    res.status(200).json({ data: response.data});
+    console.log(response.data)
+    res.status(200).json({ data: response.data });
   } catch (error) {
     console.log("Error:", error);
     res.status(400).json({
