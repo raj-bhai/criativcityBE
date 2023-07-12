@@ -115,10 +115,11 @@ exports.createOrder = async (req, res, next) => {
     };
     const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
     console.log(response.data)
-
-    const decodeResponse = decodeJwsToken(response.data);
-    console.log("decoded :", decodeResponse)
     res.status(200).json({ data: decodeResponse });
+
+    // const decodeResponse = decodeJwsToken(response.data);
+    // console.log("decoded :", decodeResponse)
+    // res.status(200).json({ data: decodeResponse });
   } catch (error) {
     console.log("Error:", error);
     res.status(400).json({
