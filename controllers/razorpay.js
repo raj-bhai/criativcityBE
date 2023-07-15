@@ -54,7 +54,7 @@ exports.createOrder = async (req, res, next) => {
       amount: amount,
       order_date: formattedDate,
       currency: '356',
-      ru: 'https://www.example.com/merchant/api/pgresponse',
+      ru: 'https://criativcity.com/',
       additional_info: {
         additional_info1: 'Details1',
         additional_info2: 'Details2'
