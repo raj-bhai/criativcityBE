@@ -116,7 +116,7 @@ exports.createOrder = async (req, res, next) => {
     // https://www.billdesk.com/sdk/uat/api/mandateresponse
     console.log("request :", jwsToken)
     console.log("header :", headers)
-    const response = await axios.post('https://www.billdesk.com/payments/ve1_2/orders/create', jwsToken, { headers });
+    const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
     console.log(response.data)
     // res.status(200).json({ data: decodeResponse });
 
