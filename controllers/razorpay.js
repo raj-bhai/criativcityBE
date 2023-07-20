@@ -138,6 +138,7 @@ exports.createOrder = async (req, res, next) => {
 exports.createWebhook = async (req, res, next) => {
   try {
     console.log("req :", req.body)
+    res.redirect('https://criativcity.com/');
     res.status(200).json({ data: "success" });
   } catch (err) {
     res.status(200).json({ data: "failure" });
