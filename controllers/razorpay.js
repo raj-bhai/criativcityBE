@@ -1,6 +1,7 @@
 require('dotenv').config();
 const crypto = require('crypto');
 const axios = require('axios');
+const { error } = require('console');
 
 
 
@@ -54,7 +55,8 @@ exports.createOrder = async (req, res, next) => {
       amount: amount,
       order_date: formattedDate,
       currency: '356',
-      ru: 'https://criativcity.com/',
+      // ru: 'https://criativcity.com/',
+      ru: 'https://criativcitybe.onrender.com/razorpay/webhook',
       additional_info: {
         additional_info1: 'Details1',
         additional_info2: 'Details2'
@@ -132,5 +134,15 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
+
+exports.createWebhook = async (req, res, next) => {
+  try {
+    console.log("req :", req.body)
+    res.status(200).json({ data: "success" });
+  } catch (err) {
+    res.status(200).json({ data: "failure" });
+    console.log("err :", err)
+  }
+}
 
 
