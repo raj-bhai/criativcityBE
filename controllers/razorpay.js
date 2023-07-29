@@ -43,19 +43,15 @@ function decodeJwsToken(jwsToken) {
 
 exports.createOrder = async (req, res, next) => {
   try {
-
     const { orderId, amount } = req.body;
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().replace(/\.\d{3}/, '') + '+0530';
-
-
     const payload = {
       mercid: process.env.BILLDESK_MERCHANTID,
       orderid: orderId,
       amount: amount,
       order_date: formattedDate,
       currency: '356',
-      // ru: 'https://criativcity.com/',
       ru: 'https://criativcitybe.onrender.com/razorpay/webhook',
       additional_info: {
         additional_info1: 'Details1',
@@ -88,45 +84,34 @@ exports.createOrder = async (req, res, next) => {
         fingerprintid: '61b12c18b5d0cf901be34a23ca64bb19'
       }
     };
-
     const payloadString = JSON.stringify(payload);
     const timestamp = generateBdTimestamp();
-
     const jwsHeader = {
       alg: 'HS256',
       clientid: process.env.BILLDESK_CLIENTID
     };
-
     const jwsHeaderString = base64UrlEncode(JSON.stringify(jwsHeader));
     const jwsPayloadString = base64UrlEncode(payloadString);
-
     const encodedData = `${jwsHeaderString}.${jwsPayloadString}`;
-
     const secretKey = process.env.BILLDESK_SECRET_KEY;
     const hmac = crypto.createHmac('sha256', secretKey);
     hmac.update(encodedData);
     const jwsSignature = base64UrlEncode(hmac.digest());
-
     const jwsToken = `${jwsHeaderString}.${jwsPayloadString}.${jwsSignature}`;
-
     const headers = {
       'Content-Type': 'application/jose',
       'bd-timestamp': timestamp,
       'Accept': 'application/jose',
       'bd-traceid': `${timestamp}ABD1K`
     };
-    // https://www.billdesk.com/sdk/uat/api/mandateresponse
     console.log("request :", jwsToken)
     console.log("header :", headers)
-    const response = await axios.post('https://pguat.billdesk.io/payments/ve1_2/orders/create', jwsToken, { headers });
+    const response = await axios.post('https://api.billdesk.com/payments/ve1_2/orders/create', jwsToken, { headers });
     console.log(response.data)
-    // res.status(200).json({ data: decodeResponse });
-
     const decodeResponse = decodeJwsToken(response.data);
     console.log("decoded :", decodeResponse)
     res.status(200).json({ data: decodeResponse });
   } catch (error) {
-    // console.log("Error:", error);
     res.status(400).json({
       message: error,
       success: false
